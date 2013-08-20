@@ -19,13 +19,14 @@ using System.Text;
 
 namespace MarkdownDeep
 {
-	internal enum ColumnAlignment
-	{
+
+	internal enum ColumnAlignment {
 		NA,
 		Left,
 		Right,
 		Center,
 	}
+
 	internal class TableSpec
 	{
 		public TableSpec()
@@ -35,39 +36,47 @@ namespace MarkdownDeep
 		public bool LeadingBar;
 		public bool TrailingBar;
 
-		public List<ColumnAlignment> Columns=new List<ColumnAlignment>();
+		public List<ColumnAlignment> Columns = new List<ColumnAlignment>();
 
-		public List<string> Headers;
-		public List<List<string>> Rows=new List<List<string>>();
+		public List<List<TableCellDefinition>> Headers = new List<List<TableCellDefinition>>();
+		public List<List<TableCellDefinition>> Rows = new List<List<TableCellDefinition>>();
 
-		public List<string> ParseRow(StringScanner p)
+		public List<TableCellDefinition> ParseRow(StringScanner p)
 		{
 			p.SkipLinespace();
 
 			if (p.eol)
 				return null;		// Blank line ends the table
 
-			bool bAnyBars=LeadingBar;
+			bool bAnyBars = LeadingBar;
 			if (LeadingBar && !p.SkipChar('|'))
 			{
 				return null;
 			}
 
 			// Create the row
-			List<string> row = new List<string>();
+			List<TableCellDefinition> row = new List<TableCellDefinition>();
 
 			// Parse all columns except the last
 
 			while (!p.eol)
 			{
 				// Find the next vertical bar
+				var cell = new TableCellDefinition();
+				if (p.SkipString("# ")) 
+					cell.CellStyle = CellStyle.TH;
+				
 				p.Mark();
 				while (!p.eol && p.current != '|')
 					p.SkipForward(1);
+				cell.Content = p.Extract().Trim();
 
-				row.Add(p.Extract().Trim());
+				bAnyBars |= p.SkipChar('|');
+				int colSpan = 1;
+				while (p.SkipChar('|')) colSpan++;
+				cell.ColSpan = colSpan;
 
-				bAnyBars|=p.SkipChar('|');
+				row.Add(cell);
 			}
 
 			// Require at least one bar to continue the table
@@ -77,59 +86,48 @@ namespace MarkdownDeep
 			// Add missing columns
 			while (row.Count < Columns.Count)
 			{
-				row.Add("&nbsp;");
+				row.Add(new TableCellDefinition("&nbsp;", ColumnAlignment.NA, 1, 1, CellStyle.TD));
 			}
 
 			p.SkipEol();
 			return row;
 		}
 
-		internal void RenderRow(Markdown m, StringBuilder b, List<string> row, string type)
+		internal void RenderRow(Markdown m, StringBuilder b, List<TableCellDefinition> row, string type)
 		{
 			for (int i=0; i<row.Count; i++)
 			{
-				b.Append("\t<");
-				b.Append(type);
+				var alig = ColumnAlignment.NA;
+				if (i < Columns.Count && Columns[i] != ColumnAlignment.NA) alig = Columns[i];
 
-				if (i < Columns.Count)
-				{
-					switch (Columns[i])
-					{
-						case ColumnAlignment.Left:
-							b.Append(" align=\"left\"");
-							break;
-						case ColumnAlignment.Right:
-							b.Append(" align=\"right\"");
-							break;
-						case ColumnAlignment.Center:
-							b.Append(" align=\"center\"");
-							break;
-					}
-				}
-
-				b.Append(">");
-				m.SpanFormatter.Format(b, row[i]);
-				b.Append("</");
-				b.Append(type);
-				b.Append(">\n");
+				var cell = row[i];
+				b.Append("\t");
+				cell.RenderOpenTag(b, type, alig);
+				m.SpanFormatter.Format(b, cell.Content);
+				cell.RenderCloseTag(b, type);
+				b.Append("\n");
 			}
 		}
 	
 		public void Render(Markdown m, StringBuilder b)
 		{
 			b.Append("<table>\n");
-			if (Headers != null)
+			if (Headers != null && Headers.Count > 0)
 			{
-				b.Append("<thead>\n<tr>\n");
-				RenderRow(m, b, Headers, "th");
-				b.Append("</tr>\n</thead>\n");
+				b.Append("<thead>\n");
+				foreach (var row in Rows) {
+					b.Append("<tr>\n");
+					RenderRow(m, b, row, "th");
+					b.Append("</tr>\n");
+				}
+				b.Append("</thead>\n");
 			}
 
 			b.Append("<tbody>\n");
 			foreach (var row in Rows)
 			{
 				b.Append("<tr>\n");
-				RenderRow(m, b, row, "td");
+				RenderRow(m, b, row, null);
 				b.Append("</tr>\n");
 			}
 			b.Append("</tbody>\n");
