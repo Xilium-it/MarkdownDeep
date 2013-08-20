@@ -13,12 +13,14 @@ This fork of original [topsoftware/markdowndeep] project implements some new fea
 
 Like MultiMarkdown, fspezi/markdowndeep implements table colspan:
 
-|       Your name        |  Home address  | Office address |
-| First name | Last name | address | city | address | city |
-|------------|-----------|---------|------|---------|------|
-| Mark       | Deep      | ss...   | NY   | ss....  | WH   |
-| James      | White     | ss...   | NY   | ss..    | CA   |
-| ...        | ...       | ...     | ...  | ...     | ...  |
-| ...        | ...       | ...     | ...  | ...     | ...  |
-| ...        | ...       | ...     | ...  | ...     | ...  |
-| ...        | ...       | ...     | ...  | ...     | ...  |
+```
+|       Your name       ||       Home     ||         Office              |||  
+| First name | Last name | address | city  | address | city  | Email       |  
+|------------|-----------|---------|-------|---------|-------|-------------|
+| Mark       | Deep      | ss...   | NY    | ss....  | WH    | aa@acme.com |
+| James      | White     | ss...   | NY    | ss..    | CA    | bb@acme.com |
+| ...        | ...       | ...     | ...   | ...     | ...   | ...         |
+| ...        | ...       | ...     | ...   | ...     | ...   | ...         |
+| ...        | ...       | ...     | ...   | ...     | ...   | ...         |
+| ...        | ...       | ...     | ...   | ...     | ...   | ...         |
+```
