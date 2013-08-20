@@ -55,18 +55,17 @@ namespace MarkdownDeep
 
 		internal bool StartTable(TableSpec spec, List<Block> lines)
 		{
-			// Mustn't have more than 1 preceeding line
-			if (lines.Count > 1)
-				return false;
-
 			// Rewind, parse the header row then fast forward back to current pos
-			if (lines.Count == 1)
+			if (lines.Count >= 1)
 			{
 				int savepos = position;
 				position = lines[0].lineStart;
-				spec.Headers = spec.ParseRow(this);
-				if (spec.Headers == null)
-					return false;
+				for (var i = 0; i < lines.Count; i++) {
+					var row = spec.ParseRow(this);
+					if (row == null) break;
+					spec.Headers.Add(row);
+				}
+				if (spec.Headers.Count != lines.Count) return false;
 				position = savepos;
 				lines.Clear();
 			}
