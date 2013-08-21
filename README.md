@@ -20,8 +20,8 @@ Any row inserted before the "separator row" will be added in `thead` tag of tabl
 
 ```
 | Your name  | Your name |   Home  | Home  | Office  | Office |   Office    |
-| First name | Last name | address | city  | address | city   | Email       |  
-|------------|-----------|---------|-------|---------|--------|-------------|
+| First name | Last name | address | city  | address | city   | Email       |
+|:-----------|:----------|:--------|:-----:|:--------|:------:|:------------|
 | Mark       | Deep      | ss...   | NY    | ss....  | WH     | aa@acme.com |
 | James      | White     | ss...   | NY    | ss..    | CA     | bb@acme.com |
 | ...        | ...       | ...     | ...   | ...     | ...    | ...         |
@@ -35,9 +35,9 @@ Any row inserted before the "separator row" will be added in `thead` tag of tabl
 Like MultiMarkdown, **fspezi/markdowndeep** implements table colspan:
 
 ```
-|       Your name       ||       Home     ||         Office              |||  
-| First name | Last name | address | city  | address | city  | Email       |  
-|------------|-----------|---------|-------|---------|-------|-------------|
+|       Your name       ||       Home     ||         Office              |||
+| First name | Last name | address | city  | address | city  | Email       |
+|:-----------|:----------|:--------|:-----:|:--------|:-----:|:------------|
 | Mark       | Deep      | ss...   | NY    | ss....  | WH    | aa@acme.com |
 | James      | White     | ss...   | NY    | ss..    | CA    | bb@acme.com |
 | ...        | ...       | ...     | ...   | ...     | ...   | ...         |
@@ -54,9 +54,9 @@ Any `|` added to the end of cell will be counted to determine the **colspan valu
 You can mark any cell to declare it as *Header cell*.
 
 ```
-|       Your name       ||       Home     ||         Office              |||  
-| First name | Last name | address | city  | address | city  | Email       |  
-|------------|-----------|---------|-------|---------|-------|-------------|
+|       Your name       ||       Home     ||         Office              |||
+| First name | Last name | address | city  | address | city  | Email       |
+|:-----------|:----------|:--------|:-----:|:--------|:-----:|:------------|
 |# Mark      |# Deep     | ss...   | NY    | ss....  | WH    | aa@acme.com |
 |# James     |# White    | ss...   | NY    | ss..    | CA    | bb@acme.com |
 |# ...       |# ...      | ...     | ...   | ...     | ...   | ...         |
@@ -76,7 +76,7 @@ You can customize horizontal alignment of any cell.
 ```
 |:       Your name     :||:      Home    :||:         Office            :|||
 | First name | Last name | address | city  | address | city  | Email       |
-|------------|-----------|---------|-------|---------|-------|-------------|
+|:-----------|:----------|:--------|:-----:|:--------|:-----:|:------------|
 |# Mark      |# Deep     | ss...   | NY    | ss....  | WH    | aa@acme.com |
 |# James     |# White    | ss...   | NY    | ss..    | CA    | bb@acme.com |
 |# ...       |# ...      | ...     | ...   | ...     | ...   | ...         |
@@ -90,14 +90,14 @@ Use the same syntax of alignment when you define it in separator-row.
 **Note:** if you want define "left or center alignment" and "header style" together, type `:` before `#`.
 
 ```
-|:       Your name     :||:      Home    :||:         Office            :|||
-| First name | Last name | address | city  | address | city  | Email       |
-|------------|-----------|---------|-------|---------|-------|-------------|
-|# Mark      |# Deep     | ss...   | NY    | ss....  | WH    | aa@acme.com |
-|# James     |# White    | ss...   | NY    | ss..    | CA    | bb@acme.com |
-|# ...       |# ...      | ...     | ...   | ...     | ...   | ...         |
-|# ...       |# ...      | ...     | ...   | ...     | ...   | ...         |
-|# ...       |# ...      | ...     | ...   | ...     | ...   | ...         |
-|# ...       |# ...      | ...     | ...   | ...     | ...   | ...         |
-| ||||||: 6 employees :|
+|:       Your name     :||:      Home    :||:          Office              :|||
+| First name | Last name | address | city  | address | city  | Email          |
+|:-----------|:----------|:--------|:-----:|:--------|:-----:|:---------------|
+|# Mark      |# Deep     | ss...   | NY    | ss....  | WH    | aa@acme.com    |
+|# James     |# White    | ss...   | NY    | ss..    | CA    | bb@acme.com    |
+|# ...       |# ...      | ...     | ...   | ...     | ...   | ...            |
+|# ...       |# ...      | ...     | ...   | ...     | ...   | ...            |
+|# ...       |# ...      | ...     | ...   | ...     | ...   | ...            |
+|# ...       |# ...      | ...     | ...   | ...     | ...   | ...            |
+|                                                       ||||||:# 6 employees :|
 ```
