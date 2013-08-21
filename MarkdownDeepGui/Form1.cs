@@ -14,8 +14,8 @@ namespace MarkdownDeepGui
 		private const string cssStyle = @"
 table		{ font-size:10pt; }
 table td	{ background-color: #ddd; }
-table th	{ background-color: #ccc; font-weight: bold; }
-table thead th	{ background-color: #777; color: white; font-weight: bold; font-size:110%; }
+table th	{ background-color: #aca; font-weight: bold; }
+table thead th	{ background-color: #447; color: white; font-weight: bold; font-size:110%; }
 ";
 
 		public Form1()
