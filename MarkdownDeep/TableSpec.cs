@@ -58,6 +58,7 @@ namespace MarkdownDeep
 			List<TableCellDefinition> row = new List<TableCellDefinition>();
 
 			// Parse all columns except the last
+			int totalColSpan = 0;
 
 			while (!p.eol)
 			{
@@ -75,6 +76,7 @@ namespace MarkdownDeep
 				int colSpan = 1;
 				while (p.SkipChar('|')) colSpan++;
 				cell.ColSpan = colSpan;
+				totalColSpan += colSpan;
 
 				row.Add(cell);
 			}
@@ -83,10 +85,15 @@ namespace MarkdownDeep
 			if (!bAnyBars)
 				return null;
 
-			// Add missing columns
-			while (row.Count < Columns.Count)
-			{
-				row.Add(new TableCellDefinition("&nbsp;", ColumnAlignment.NA, 1, 1, CellStyle.TD));
+			// Add missing columns in row
+			if (totalColSpan < Columns.Count) {
+				for (; totalColSpan < Columns.Count; totalColSpan++)
+					row.Add(new TableCellDefinition("&nbsp;", ColumnAlignment.NA, 1, 1, CellStyle.TD));
+			} else
+				// Add missing columns in Columns
+				if (totalColSpan > Columns.Count) {
+					while (Columns.Count < totalColSpan) 
+						Columns.Add(ColumnAlignment.NA);
 			}
 
 			p.SkipEol();
@@ -115,19 +122,19 @@ namespace MarkdownDeep
 			if (Headers != null && Headers.Count > 0)
 			{
 				b.Append("<thead>\n");
-				foreach (var row in Rows) {
+				foreach (var headerRow in Headers) {
 					b.Append("<tr>\n");
-					RenderRow(m, b, row, "th");
+					RenderRow(m, b, headerRow, "th");
 					b.Append("</tr>\n");
 				}
 				b.Append("</thead>\n");
 			}
 
 			b.Append("<tbody>\n");
-			foreach (var row in Rows)
+			foreach (var contentRow in Rows)
 			{
 				b.Append("<tr>\n");
-				RenderRow(m, b, row, null);
+				RenderRow(m, b, contentRow, null);
 				b.Append("</tr>\n");
 			}
 			b.Append("</tbody>\n");
