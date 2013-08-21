@@ -30,8 +30,8 @@ namespace MarkdownDeepTests
 			Assert.IsFalse(s.LeadingBar);
 			Assert.IsFalse(s.TrailingBar);
 			Assert.AreEqual(2, s.Columns.Count);
-			Assert.AreEqual(ColumnAlignment.NA, s.Columns[0]);
-			Assert.AreEqual(ColumnAlignment.NA, s.Columns[1]);
+			Assert.AreEqual(TableCellAlignment.NA, s.Columns[0]);
+			Assert.AreEqual(TableCellAlignment.NA, s.Columns[1]);
 		}
 
 		[Test]
@@ -43,10 +43,10 @@ namespace MarkdownDeepTests
 			Assert.IsFalse(s.LeadingBar);
 			Assert.IsFalse(s.TrailingBar);
 			Assert.AreEqual(4, s.Columns.Count);
-			Assert.AreEqual(ColumnAlignment.NA, s.Columns[0]);
-			Assert.AreEqual(ColumnAlignment.Left, s.Columns[1]);
-			Assert.AreEqual(ColumnAlignment.Right, s.Columns[2]);
-			Assert.AreEqual(ColumnAlignment.Center, s.Columns[3]);
+			Assert.AreEqual(TableCellAlignment.NA, s.Columns[0]);
+			Assert.AreEqual(TableCellAlignment.Left, s.Columns[1]);
+			Assert.AreEqual(TableCellAlignment.Right, s.Columns[2]);
+			Assert.AreEqual(TableCellAlignment.Center, s.Columns[3]);
 		}
 
 		[Test]
@@ -58,10 +58,10 @@ namespace MarkdownDeepTests
 			Assert.IsTrue(s.LeadingBar);
 			Assert.IsTrue(s.TrailingBar);
 			Assert.AreEqual(4, s.Columns.Count);
-			Assert.AreEqual(ColumnAlignment.NA, s.Columns[0]);
-			Assert.AreEqual(ColumnAlignment.Left, s.Columns[1]);
-			Assert.AreEqual(ColumnAlignment.Right, s.Columns[2]);
-			Assert.AreEqual(ColumnAlignment.Center, s.Columns[3]);
+			Assert.AreEqual(TableCellAlignment.NA, s.Columns[0]);
+			Assert.AreEqual(TableCellAlignment.Left, s.Columns[1]);
+			Assert.AreEqual(TableCellAlignment.Right, s.Columns[2]);
+			Assert.AreEqual(TableCellAlignment.Center, s.Columns[3]);
 		}
 
 
@@ -74,10 +74,10 @@ namespace MarkdownDeepTests
 			Assert.IsTrue(s.LeadingBar);
 			Assert.IsTrue(s.TrailingBar);
 			Assert.AreEqual(4, s.Columns.Count);
-			Assert.AreEqual(ColumnAlignment.NA, s.Columns[0]);
-			Assert.AreEqual(ColumnAlignment.Left, s.Columns[1]);
-			Assert.AreEqual(ColumnAlignment.Right, s.Columns[2]);
-			Assert.AreEqual(ColumnAlignment.Center, s.Columns[3]);
+			Assert.AreEqual(TableCellAlignment.NA, s.Columns[0]);
+			Assert.AreEqual(TableCellAlignment.Left, s.Columns[1]);
+			Assert.AreEqual(TableCellAlignment.Right, s.Columns[2]);
+			Assert.AreEqual(TableCellAlignment.Center, s.Columns[3]);
 		}
 
 
