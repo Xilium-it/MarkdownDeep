@@ -9,8 +9,15 @@ using System.Windows.Forms;
 
 namespace MarkdownDeepGui
 {
-	public partial class Form1 : Form
-	{
+	public partial class Form1 : Form {
+
+		private const string cssStyle = @"
+table		{ font-size:10pt; }
+table td	{ background-color: #ddd; }
+table th	{ background-color: #ccc; font-weight: bold; }
+table thead th	{ background-color: #777; color: white; font-weight: bold; font-size:110%; }
+";
+
 		public Form1()
 		{
 			InitializeComponent();
@@ -22,7 +29,7 @@ namespace MarkdownDeepGui
 		private void doUpdate()
 		{
 			this.txtSource.Text = m_Markdown.Transform(txtMarkdown.Text).Replace("\n", "\r\n");
-			this.webPreview.DocumentText = this.txtSource.Text;
+			this.webPreview.DocumentText = "<style type=\"text/css\">" + cssStyle + "</style>\n" + this.txtSource.Text;
 		}
 
 		private void txtMarkdown_TextChanged(object sender, EventArgs e)
@@ -44,6 +51,10 @@ namespace MarkdownDeepGui
 		{
 			m_Markdown.ExtraMode = this.checkExtraMode.Checked;
 			doUpdate();
+		}
+
+		private void Form1_Load(object sender, EventArgs e) {
+
 		}
 	}
 }
