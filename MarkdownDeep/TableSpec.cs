@@ -20,12 +20,6 @@ using System.Text;
 namespace MarkdownDeep
 {
 
-	internal enum ColumnAlignment {
-		NA,
-		Left,
-		Right,
-		Center,
-	}
 
 	internal class TableSpec
 	{
@@ -36,7 +30,7 @@ namespace MarkdownDeep
 		public bool LeadingBar;
 		public bool TrailingBar;
 
-		public List<ColumnAlignment> Columns = new List<ColumnAlignment>();
+		public List<TableCellAlignment> Columns = new List<TableCellAlignment>();
 
 		public List<List<TableCellDefinition>> Headers = new List<List<TableCellDefinition>>();
 		public List<List<TableCellDefinition>> Rows = new List<List<TableCellDefinition>>();
@@ -62,22 +56,46 @@ namespace MarkdownDeep
 
 			while (!p.eol)
 			{
-				// Find the next vertical bar
+				// Build new TableCellDefinition
+
 				var cell = new TableCellDefinition();
+				bool bAlignLeft = false;
+				bool bAlignRight = false;
+
+				// Check custom cell alignment
+				bAlignLeft = p.SkipChar(':');
+
+				// Check custom cell style
 				if (p.SkipString("# ")) 
 					cell.CellStyle = CellStyle.TH;
-				
+
+				// Find the next vertical bar
 				p.Mark();
 				while (!p.eol && p.current != '|')
 					p.SkipForward(1);
-				cell.Content = p.Extract().Trim();
 
+				// Check custom cell alignment
+				bAlignRight = p.DoesMatch(-2, " :");
+
+				// Get cell content
+				cell.Content = p.Extract(0, (bAlignRight ? -2 : 0)).Trim();
+
+				// Get colspan
 				bAnyBars |= p.SkipChar('|');
 				int colSpan = 1;
 				while (p.SkipChar('|')) colSpan++;
 				cell.ColSpan = colSpan;
 				totalColSpan += colSpan;
 
+				// Set cell alignment
+				if (bAlignLeft && bAlignRight)
+					cell.Alignment = TableCellAlignment.Center;
+				else if (bAlignLeft)
+					cell.Alignment = TableCellAlignment.Left;
+				else if (bAlignRight)
+					cell.Alignment = TableCellAlignment.Right;
+
+				// Add cell to row
 				row.Add(cell);
 			}
 
@@ -87,7 +105,7 @@ namespace MarkdownDeep
 
 			// Add missing columns in Columns
 			while (Columns.Count < totalColSpan) 
-				Columns.Add(ColumnAlignment.NA);
+				Columns.Add(TableCellAlignment.NA);
 
 			p.SkipEol();
 			return row;
@@ -102,13 +120,13 @@ namespace MarkdownDeep
 
 			// Add missing columns in row
 			for (int i = totalColSpan; i < Columns.Count; i++)
-				row.Add(new TableCellDefinition("&nbsp;", ColumnAlignment.NA, 1, 1, CellStyle.TD));
+				row.Add(new TableCellDefinition("&nbsp;", TableCellAlignment.NA, 1, 1, CellStyle.TD));
 
 			// Render row
 			for (int i = 0; i < row.Count; i++)
 			{
-				var alig = ColumnAlignment.NA;
-				if (i < Columns.Count && Columns[i] != ColumnAlignment.NA) alig = Columns[i];
+				var alig = TableCellAlignment.NA;
+				if (i < Columns.Count && Columns[i] != TableCellAlignment.NA) alig = Columns[i];
 
 				var cell = row[i];
 				b.Append("\t");
@@ -182,13 +200,13 @@ namespace MarkdownDeep
 				p.SkipLinespace();
 
 				// Work out column alignment
-				ColumnAlignment col = ColumnAlignment.NA;
+				TableCellAlignment col = TableCellAlignment.NA;
 				if (AlignLeft && AlignRight)
-					col = ColumnAlignment.Center;
+					col = TableCellAlignment.Center;
 				else if (AlignLeft)
-					col = ColumnAlignment.Left;
+					col = TableCellAlignment.Left;
 				else if (AlignRight)
-					col = ColumnAlignment.Right;
+					col = TableCellAlignment.Right;
 
 				if (p.eol)
 				{

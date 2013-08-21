@@ -18,17 +18,27 @@ using System.Linq;
 using System.Text;
 
 namespace MarkdownDeep {
+
+
+	internal enum TableCellAlignment {
+		NA,
+		Left,
+		Right,
+		Center,
+	}
+
+
 	internal class TableCellDefinition {
 		private string _content;
-		private ColumnAlignment _alignment;
+		private TableCellAlignment _alignment;
 		private int _colSpan;
 		private int _rowSpan;
 		private CellStyle _cellStyle;
 
-		public TableCellDefinition() : this(null, ColumnAlignment.NA, 1, 1, CellStyle.TD) {
+		public TableCellDefinition() : this(null, TableCellAlignment.NA, 1, 1, CellStyle.TD) {
 			
 		}
-		public TableCellDefinition(string content, ColumnAlignment alignment, int colSpan, int rowSpan, CellStyle cellStyle) {
+		public TableCellDefinition(string content, TableCellAlignment alignment, int colSpan, int rowSpan, CellStyle cellStyle) {
 			this._content = content;
 			this._alignment = alignment;
 			this._colSpan = colSpan;
@@ -41,7 +51,7 @@ namespace MarkdownDeep {
 			set { this._content = value; }
 		}
 
-		public ColumnAlignment Alignment {
+		public TableCellAlignment Alignment {
 			get { return this._alignment; }
 			set { this._alignment = value; }
 		}
@@ -73,21 +83,26 @@ namespace MarkdownDeep {
 			}
 		}
 
-		public void RenderOpenTag(StringBuilder b, string tagName, ColumnAlignment alignment) {
+		public void RenderOpenTag(StringBuilder b, string tagName, TableCellAlignment columnAlignment) {
 			b.Append("<");
+
+			// Add tagName (priority to argument)
 			b.Append(tagName ?? this.TagName);
-			var alig = (alignment != ColumnAlignment.NA ? alignment : this.Alignment);
-			switch (alignment) {
-				case ColumnAlignment.Left:
+
+			// Determining alignment (priority to cell)
+			var alig = (this.Alignment != TableCellAlignment.NA ? this.Alignment : columnAlignment);
+			switch (alig) {
+				case TableCellAlignment.Left:
 					b.Append(" align=\"left\"");
 					break;
-				case ColumnAlignment.Right:
+				case TableCellAlignment.Right:
 					b.Append(" align=\"right\"");
 					break;
-				case ColumnAlignment.Center:
+				case TableCellAlignment.Center:
 					b.Append(" align=\"center\"");
 					break;
 			}
+
 			if (this.ColSpan > 1) {
 				b.Append(" colspan=\"");
 				b.Append(this.ColSpan);
