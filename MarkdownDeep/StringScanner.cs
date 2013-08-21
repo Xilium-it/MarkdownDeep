@@ -301,11 +301,14 @@ namespace MarkdownDeep
 		}
 
 		// Does current string position match a string
-		public bool DoesMatch(string str)
-		{
-			for (int i = 0; i < str.Length; i++)
-			{
-				if (str[i] != CharAtOffset(i))
+		public bool DoesMatch(string str) {
+			return DoesMatch(0, str);
+		}
+
+		// Does current string position match a string
+		public bool DoesMatch(int offset, string str) {
+			for (int i = 0; i < str.Length; i++) {
+				if (str[i] != CharAtOffset(i + offset))
 					return false;
 			}
 			return true;
@@ -426,12 +429,20 @@ namespace MarkdownDeep
 		}
 
 		// Extract string from mark to current position
-		public string Extract()
-		{
-			if (mark >= pos)
+		public string Extract() {
+			return Extract(0, 0);
+		}
+
+
+		// Extract string from mark to current position
+		public string Extract(int startOffset, int endOffset) {
+			int begin = mark + startOffset;
+			int end = pos + endOffset;
+
+			if (begin >= end)
 				return "";
 
-			return str.Substring(mark, pos - mark);
+			return str.Substring(begin, end - begin);
 		}
 
 		// Skip an identifier
