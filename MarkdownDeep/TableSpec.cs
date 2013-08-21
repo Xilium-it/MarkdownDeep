@@ -85,16 +85,9 @@ namespace MarkdownDeep
 			if (!bAnyBars)
 				return null;
 
-			// Add missing columns in row
-			if (totalColSpan < Columns.Count) {
-				for (; totalColSpan < Columns.Count; totalColSpan++)
-					row.Add(new TableCellDefinition("&nbsp;", ColumnAlignment.NA, 1, 1, CellStyle.TD));
-			} else
-				// Add missing columns in Columns
-				if (totalColSpan > Columns.Count) {
-					while (Columns.Count < totalColSpan) 
-						Columns.Add(ColumnAlignment.NA);
-			}
+			// Add missing columns in Columns
+			while (Columns.Count < totalColSpan) 
+				Columns.Add(ColumnAlignment.NA);
 
 			p.SkipEol();
 			return row;
@@ -102,7 +95,17 @@ namespace MarkdownDeep
 
 		internal void RenderRow(Markdown m, StringBuilder b, List<TableCellDefinition> row, string type)
 		{
-			for (int i=0; i<row.Count; i++)
+			// Count of columns spanned
+			var totalColSpan = 0;
+			for (int i = 0; i < row.Count; i++)
+				totalColSpan += row[i].ColSpan;
+
+			// Add missing columns in row
+			for (int i = totalColSpan; i < Columns.Count; i++)
+				row.Add(new TableCellDefinition("&nbsp;", ColumnAlignment.NA, 1, 1, CellStyle.TD));
+
+			// Render row
+			for (int i = 0; i < row.Count; i++)
 			{
 				var alig = ColumnAlignment.NA;
 				if (i < Columns.Count && Columns[i] != ColumnAlignment.NA) alig = Columns[i];
