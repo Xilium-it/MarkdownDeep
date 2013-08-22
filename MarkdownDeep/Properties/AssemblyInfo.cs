@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MarkdownDeep")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Topten Software")]
+[assembly: AssemblyCompany("Xilium Software")]
 [assembly: AssemblyProduct("MarkdownDeep")]
-[assembly: AssemblyCopyright("Copyright © 2010-2011 Topten Software")]
+[assembly: AssemblyCopyright("Copyright © 2010-2011 Topten Software, 2013 Xilium Software")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.5.*")]
+[assembly: AssemblyVersion("1.6.*")]
 [assembly: InternalsVisibleTo("MarkdownDeepTests")]
