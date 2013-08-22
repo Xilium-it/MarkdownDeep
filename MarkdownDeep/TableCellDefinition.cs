@@ -1,6 +1,6 @@
 ﻿// 
-//   MarkdownDeep - http://www.toptensoftware.com/markdowndeep
-//	 Copyright (C) 2010-2011 Topten Software
+//   MarkdownDeep - http://www.xilium.it/
+//	 Copyright (C) 2013 Xilium Software
 // 
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this product except in 
 //   compliance with the License. You may obtain a copy of the License at
