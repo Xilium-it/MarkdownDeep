@@ -67,7 +67,7 @@ namespace MarkdownDeep
 
 				// Check custom cell style
 				if (p.SkipString("# ")) 
-					cell.CellStyle = CellStyle.TH;
+					cell.CellStyle = TableCellStyle.TH;
 
 				// Find the next vertical bar
 				p.Mark();
@@ -120,7 +120,7 @@ namespace MarkdownDeep
 
 			// Add missing columns in row
 			for (int i = totalColSpan; i < Columns.Count; i++)
-				row.Add(new TableCellDefinition("&nbsp;", TableCellAlignment.NA, 1, 1, CellStyle.TD));
+				row.Add(new TableCellDefinition("&nbsp;", TableCellAlignment.NA, 1, 1, TableCellStyle.TD));
 
 			// Render row
 			for (int i = 0; i < row.Count; i++)

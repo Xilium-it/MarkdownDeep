@@ -514,7 +514,3 @@ Use the same syntax of alignment when you define it in separator-row.
 
 
 
-## Important
-
-Any features and solved issues are inside `C#` library.  
-Next days I will work in JavaScript library to porting all features.

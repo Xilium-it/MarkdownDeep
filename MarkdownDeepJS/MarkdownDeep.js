@@ -948,7 +948,7 @@ var MarkdownDeep = new function () {
         return false;
     }
     p.SkipString = function (s) {
-        if (this.buf.substr(this.m_position, s.length) == s) {
+    	if (this.DoesMatch(0, s)) {
             this.m_position += s.length;
             return true;
         }
@@ -974,6 +974,9 @@ var MarkdownDeep = new function () {
         }
         return this.m_position != save;
     }
+	p.DoesMatch = function(offset, s) {
+		return this.buf.substr(this.m_position + (offset || 0), s.length) == s;
+	}
     p.FindRE = function (re) {
         re.lastIndex = this.m_position;
         var result = re.exec(this.buf);
@@ -1037,11 +1040,14 @@ var MarkdownDeep = new function () {
     p.Mark = function () {
         this.mark = this.m_position;
     }
-    p.Extract = function () {
-        if (this.mark >= this.m_position)
+    p.Extract = function (startOffset, endOffset) {
+    	var begin = this.mark + (startOffset || 0)
+    		, end = this.m_position + (endOffset || 0);
+    	
+    	if (begin >= end)
             return "";
-        else
-            return this.buf.substr(this.mark, this.m_position - this.mark);
+
+    	return this.buf.substr(begin, end - this.mark);
     }
     p.SkipIdentifier = function () {
         var ch = this.buf.charAt(this.m_position);
@@ -2869,17 +2875,18 @@ var MarkdownDeep = new function () {
     }
 
     p.StartTable = function (p, spec, lines) {
-        // Mustn't have more than 1 preceeding line
-        if (lines.length > 1)
-            return false;
-
+        
         // Rewind, parse the header row then fast forward back to current pos
-        if (lines.length == 1) {
+        if (lines.length >= 1) {
             var savepos = p.m_position;
             p.m_position = lines[0].lineStart;
-            spec.m_Headers = spec.ParseRow(p);
-            if (spec.m_Headers == null)
-                return false;
+            for (var i = 0; i < lines.length; i++) {
+            	var row = spec.ParseRow(p);
+            	if (row == null) break;
+            	spec.m_Headers.push(row);
+            }
+            if (spec.m_Headers.length != lines.length)
+            	return false;
             p.m_position = savepos;
             lines.length = 0;
         }
@@ -4196,14 +4203,17 @@ var MarkdownDeep = new function () {
     }
 
 
-    var ColumnAlignment_NA = 0;
-    var ColumnAlignment_Left = 1;
-    var ColumnAlignment_Right = 2;
-    var ColumnAlignment_Center = 3;
+    var TableCellAlignment_NA = 0;
+    var TableCellAlignment_Left = 1;
+    var TableCellAlignment_Right = 2;
+    var TableCellAlignment_Center = 3;
+
+    var TableCellStyle_TD = 1;
+    var TableCellStyle_TH = 2;
 
     function TableSpec() {
         this.m_Columns = [];
-        this.m_Headers = null;
+        this.m_Headers = [];
         this.m_Rows = [];
     }
 
@@ -4219,80 +4229,114 @@ var MarkdownDeep = new function () {
             return null; 	// Blank line ends the table
 
         var bAnyBars = this.LeadingBar;
-        if (this.LeadingBar && !p.SkipChar('|')) {
-            bAnyBars = true;
+        if (this.LeadingBar && !p.SkipChar('|')) 
             return null;
-        }
 
         // Create the row
         var row = [];
-
-        // Parse all columns except the last
+		
+    	// Parse all columns except the last
+        var totalColSpan = 0;
 
         while (!p.eol()) {
-            // Find the next vertical bar
-            p.Mark();
-            while (!p.eol() && p.current() != '|')
-                p.SkipForward(1);
+        	// Build new TableCellDefinition
 
-            row.push(Trim(p.Extract()));
+        	var cell = new TableCellDefinition()
+        		, bAlignLeft = false
+        		, bAlignRight = false;
 
-            bAnyBars |= p.SkipChar('|');
+        	// Check custom cell alignment
+        	bAlignLeft = p.SkipChar(':');
+
+        	// Check custom cell style
+        	if (p.SkipString("# ")) 
+        		cell.CellStyle = TableCellStyle_TH;
+
+        	// Find the next vertical bar
+        	p.Mark();
+        	while (!p.eol() && p.current() != '|')
+        		p.SkipForward(1);
+
+        	// Check custom cell alignment
+        	bAlignRight = p.DoesMatch(-2, " :");
+
+        	// Get cell content
+        	cell.Content = Trim(p.Extract(0, (bAlignRight ? -2 : 0)));
+
+        	// Get colspan
+        	bAnyBars |= p.SkipChar('|');
+        	var colSpan = 1;
+        	while (p.SkipChar('|')) colSpan++;
+        	cell.ColSpan = colSpan;
+        	totalColSpan += colSpan;
+
+        	// Set cell alignment
+        	if (bAlignLeft && bAlignRight)
+        		cell.Alignment = TableCellAlignment_Center;
+        	else if (bAlignLeft)
+        		cell.Alignment = TableCellAlignment_Left;
+        	else if (bAlignRight)
+        		cell.Alignment = TableCellAlignment_Right;
+
+        	// Add cell to row
+        	row.push(cell);
+	        
         }
 
         // Require at least one bar to continue the table
         if (!bAnyBars)
-            return null;
-
-        // Add missing columns
-        while (row.length < this.m_Columns.length) {
-            row.push("&nbsp;");
-        }
+        	return null;
+	    
+    	// Add missing columns in Columns
+        while (this.m_Columns.Count < totalColSpan)
+        	this.m_Columns.push(TableCellAlignment_NA);
 
         p.SkipEol();
         return row;
     }
 
     p.RenderRow = function (m, b, row, type) {
-        for (var i = 0; i < row.length; i++) {
-            b.Append("\t<");
-            b.Append(type);
+    	// Count of columns spanned
+    	var totalColSpan = 0;
+    	for (var i = 0; i < row.length; i++)
+    		totalColSpan += row[i].ColSpan;
 
-            if (i < this.m_Columns.length) {
-                switch (this.m_Columns[i]) {
-                    case ColumnAlignment_Left:
-                        b.Append(" align=\"left\"");
-                        break;
-                    case ColumnAlignment_Right:
-                        b.Append(" align=\"right\"");
-                        break;
-                    case ColumnAlignment_Center:
-                        b.Append(" align=\"center\"");
-                        break;
-                }
-            }
+    	// Add missing columns in row
+    	for (var i = totalColSpan; i < this.m_Columns.length; i++)
+    		row.push(new TableCellDefinition("&nbsp;", TableCellAlignment_NA, 1, 1, TableCellStyle_TD));
 
-            b.Append(">");
-            m.m_SpanFormatter.Format2(b, row[i]);
-            b.Append("</");
-            b.Append(type);
-            b.Append(">\n");
-        }
+    	// Render row
+    	for (var i = 0; i < row.length; i++) {
+    		var alig = TableCellAlignment_NA;
+    		if (i < this.m_Columns.length && this.m_Columns[i] != TableCellAlignment_NA) alig = this.m_Columns[i];
+
+    		var cell = row[i];
+    		b.Append("\t");
+    		cell.RenderOpenTag(b, type, alig);
+    		m.m_SpanFormatter.Format2(b, cell.Content);
+    		cell.RenderCloseTag(b, type);
+    		b.Append("\n");
+    	}
     }
 
     p.Render = function (m, b) {
-        b.Append("<table>\n");
-        if (this.m_Headers != null) {
-            b.Append("<thead>\n<tr>\n");
-            this.RenderRow(m, b, this.m_Headers, "th");
-            b.Append("</tr>\n</thead>\n");
-        }
-
+    	b.Append("<table>\n");
+    	if (this.m_Headers != null && this.m_Headers.length > 0) {
+    		b.Append("<thead>\n");
+    		for (var i = 0; i < this.m_Headers.length; i++) {
+    			var headerRow = this.m_Headers[i];
+    			b.Append("<tr>\n");
+    			this.RenderRow(m, b, headerRow, "th");
+    			b.Append("</tr>\n");
+    		}
+    		b.Append("</thead>\n");
+    	}
+	    
         b.Append("<tbody>\n");
         for (var i = 0; i < this.m_Rows.length; i++) {
             var row = this.m_Rows[i];
             b.Append("<tr>\n");
-            this.RenderRow(m, b, row, "td");
+            this.RenderRow(m, b, row, null);
             b.Append("</tr>\n");
         }
         b.Append("</tbody>\n");
@@ -4334,13 +4378,13 @@ var MarkdownDeep = new function () {
             p.SkipLinespace();
 
             // Work out column alignment
-            var col = ColumnAlignment_NA;
+            var col = TableCellAlignment_NA;
             if (AlignLeft && AlignRight)
-                col = ColumnAlignment_Center;
+            	col = TableCellAlignment_Center;
             else if (AlignLeft)
-                col = ColumnAlignment_Left;
+            	col = TableCellAlignment_Left;
             else if (AlignRight)
-                col = ColumnAlignment_Right;
+            	col = TableCellAlignment_Right;
 
             if (p.eol()) {
                 // Not a spec?
@@ -4373,6 +4417,63 @@ var MarkdownDeep = new function () {
             // Next column
         }
     }
+
+
+    function TableCellDefinition(content, alignment, colSpan, rowSpan, cellStyle) {
+    	this.Content = content || null;
+    	this.Alignment = alignment || TableCellAlignment_NA;
+    	this.ColSpan = colSpan || 1;
+    	this.RowSpan = rowSpan || 1;
+	    this.CellStyle = cellStyle || TableCellStyle_TD;
+    }
+
+    p = TableCellDefinition.prototype;
+
+	p.TagName = function() {
+		switch (this.CellStyle) {
+			case TableCellStyle_TH: return "th";
+			case TableCellStyle_TD: return "td";
+		}
+		return null;
+	}
+	
+	p.RenderOpenTag = function(b, tagName, columnAlignment) {
+		b.Append("<");
+		
+		// Add tagName (priority to argument)
+		b.Append(tagName || this.TagName());
+
+		// Determining alignment (priority to cell)
+		var alig = (this.Alignment != TableCellAlignment_NA ? this.Alignment : columnAlignment);
+		switch (alig) {
+			case TableCellAlignment_Left:
+				b.Append(" align=\"left\"");
+				break;
+			case TableCellAlignment_Right:
+				b.Append(" align=\"right\"");
+				break;
+			case TableCellAlignment_Center:
+				b.Append(" align=\"center\"");
+				break;
+		}
+
+		if (this.ColSpan > 1) {
+			b.Append(" colspan=\"");
+			b.Append(this.ColSpan);
+			b.Append("\"");
+		}
+		if (this.RowSpan > 1) {
+			b.Append(" rowspan=\"");
+			b.Append(this.RowSpan);
+			b.Append("\"");
+		}
+		b.Append(">");
+	}
+	p.RenderCloseTag = function(b, tagName) {
+		b.Append("</");
+		b.Append(tagName || this.TagName());
+		b.Append(">");
+	}
 
     // Exposed stuff
     this.Markdown = Markdown;

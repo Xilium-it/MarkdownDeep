@@ -28,17 +28,23 @@ namespace MarkdownDeep {
 	}
 
 
+	internal enum TableCellStyle {
+		TD		// normal table cell
+		, TH	// head table cell
+	}
+
+
 	internal class TableCellDefinition {
 		private string _content;
 		private TableCellAlignment _alignment;
 		private int _colSpan;
 		private int _rowSpan;
-		private CellStyle _cellStyle;
+		private TableCellStyle _cellStyle;
 
-		public TableCellDefinition() : this(null, TableCellAlignment.NA, 1, 1, CellStyle.TD) {
+		public TableCellDefinition() : this(null, TableCellAlignment.NA, 1, 1, TableCellStyle.TD) {
 			
 		}
-		public TableCellDefinition(string content, TableCellAlignment alignment, int colSpan, int rowSpan, CellStyle cellStyle) {
+		public TableCellDefinition(string content, TableCellAlignment alignment, int colSpan, int rowSpan, TableCellStyle cellStyle) {
 			this._content = content;
 			this._alignment = alignment;
 			this._colSpan = colSpan;
@@ -66,7 +72,7 @@ namespace MarkdownDeep {
 			set { if (value > 0) this._rowSpan = value; }
 		}
 
-		public CellStyle CellStyle {
+		public TableCellStyle CellStyle {
 			get { return this._cellStyle; }
 			set { this._cellStyle = value; }
 		}
@@ -74,9 +80,9 @@ namespace MarkdownDeep {
 		public string TagName {
 			get {
 				switch (this._cellStyle) {
-					case CellStyle.TH:
+					case TableCellStyle.TH:
 						return "th";
-					case CellStyle.TD:
+					case TableCellStyle.TD:
 						return "td";
 				}
 				return null;
@@ -120,9 +126,5 @@ namespace MarkdownDeep {
 			b.Append(tagName ?? this.TagName);
 			b.Append(">");
 		}
-	}
-	internal enum CellStyle {
-		TD		// normal table cell
-		, TH	// head table cell
 	}
 }
