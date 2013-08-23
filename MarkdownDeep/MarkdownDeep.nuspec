@@ -3,9 +3,9 @@
 	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 		<id>MarkdownDeep.NET</id>
 		<title>MarkdownDeep - .NET Only Edition</title>
-		<version>1.5</version>
-		<authors>Topten Software</authors>
-		<owners>Topten Software</owners>
+		<version>2.0</version>
+		<authors>Xilium Software</authors>
+		<owners>Xilium Software</owners>
 		<licenseUrl>http://www.toptensoftware.com/markdowndeep/license</licenseUrl>
 		<projectUrl>http://www.toptensoftware.com/markdowndeep/</projectUrl>
 		<iconUrl>http://www.toptensoftware.com/markdowndeep/nuget_icon.png</iconUrl>
@@ -19,7 +19,7 @@
 		<tags>Markdown MarkdownExtra MarkdownDeep</tags>
 	</metadata>
 	<files>
-		<file src="bin\Release\MarkdownDeep.dll" target="lib\.NetFramework 3.5" />
-		<file src="bin\Release\MarkdownDeep.pdb" target="lib\.NetFramework 3.5" />
+		<file src="bin\Release\Xilium.MarkdownDeep.dll" target="lib\.NetFramework 3.5" />
+		<file src="bin\Release\Xilium.MarkdownDeep.pdb" target="lib\.NetFramework 3.5" />
 	</files>
 </package>

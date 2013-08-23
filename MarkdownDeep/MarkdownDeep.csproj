@@ -8,8 +8,8 @@
     <ProjectGuid>{1569ED47-C7C9-4261-B6F4-7445BD0F2C95}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MarkdownDeep</RootNamespace>
-    <AssemblyName>MarkdownDeep</AssemblyName>
+    <RootNamespace>Xilium.MarkdownDeep</RootNamespace>
+    <AssemblyName>Xilium.MarkdownDeep</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Xilium.MarkdownDeep;
 
 namespace MarkdownDeepGui
 {
@@ -39,7 +40,7 @@ table thead th	{ background-color: #447; color: white; font-weight: bold; font-s
 
 
 
-		MarkdownDeep.Markdown m_Markdown = new MarkdownDeep.Markdown();
+		Markdown m_Markdown = new Markdown();
 
 		private void checkSafeMode_CheckedChanged(object sender, EventArgs e)
 		{

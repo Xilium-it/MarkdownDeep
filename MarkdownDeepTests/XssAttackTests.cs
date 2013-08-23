@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MarkdownDeep;
 using NUnit.Framework;
 using System.Reflection;
+using Xilium.MarkdownDeep;
 
 namespace MarkdownDeepTests
 {

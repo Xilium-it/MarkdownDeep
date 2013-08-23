@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MarkdownDeep;
 using System.IO;
 using System.Text.RegularExpressions;
+using Xilium.MarkdownDeep;
 
 namespace MarkdownDevBed
 {
@@ -68,7 +68,7 @@ namespace MarkdownDevBed
 			string str = m.Transform(markdown);
 			Console.Write(str);
 
-			var sections = MarkdownDeep.Markdown.SplitUserSections(markdown);
+			var sections = Markdown.SplitUserSections(markdown);
 			for (int i = 0; i < sections.Count; i++)
 			{
 				Console.WriteLine("---- Section {0} ----", i);
@@ -78,7 +78,7 @@ namespace MarkdownDevBed
 			Console.WriteLine("------------------");
 
 			Console.WriteLine("------Joined-------");
-			Console.WriteLine(MarkdownDeep.Markdown.JoinUserSections(sections));
+			Console.WriteLine(Markdown.JoinUserSections(sections));
 			Console.WriteLine("------Joined-------");
 
 			Console.WriteLine("------start head block-------");

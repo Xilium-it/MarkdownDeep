@@ -13,11 +13,9 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace MarkdownDeep
+namespace Xilium.MarkdownDeep
 {
 	public class LinkDefinition
 	{

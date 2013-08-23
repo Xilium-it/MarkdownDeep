@@ -13,11 +13,8 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace MarkdownDeep
+namespace Xilium.MarkdownDeep
 {
 	/*
 	 * StringScanner is a simple class to help scan through an input string.

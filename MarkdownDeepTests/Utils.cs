@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using NUnit.Framework;
 using System.Windows.Forms;
+using Xilium.MarkdownDeep;
 
 namespace MarkdownDeepTests
 {
@@ -121,7 +122,7 @@ namespace MarkdownDeepTests
 			string input = Utils.LoadTextResource(resourceName);
 			string expected = Utils.LoadTextResource(System.IO.Path.ChangeExtension(resourceName, "html"));
 
-			var md = new MarkdownDeep.Markdown();
+			var md = new Markdown();
 			md.SafeMode = resourceName.IndexOf("(SafeMode)") >= 0;;
 			md.ExtraMode = resourceName.IndexOf("(ExtraMode)") >= 0;;
 			md.MarkdownInHtml = resourceName.IndexOf("(MarkdownInHtml)") >= 0;
@@ -174,7 +175,7 @@ namespace MarkdownDeepTests
 			string normalized_input = input.Replace("\r\n", "\n").Replace("\r", "\n");
 
 			// Work out the expected output using C# implementation
-			var md = new MarkdownDeep.Markdown();
+			var md = new Markdown();
 			md.SafeMode = SafeMode;
 			md.ExtraMode = ExtraMode;
 			md.MarkdownInHtml = MarkdownInHtml;

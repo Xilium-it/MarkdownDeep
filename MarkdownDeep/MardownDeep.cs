@@ -14,10 +14,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace MarkdownDeep
+namespace Xilium.MarkdownDeep
 {
 
 	public class ImageInfo
@@ -604,7 +603,7 @@ namespace MarkdownDeep
 		public static List<string> SplitUserSections(string markdown)
 		{
 			// Build blocks
-			var md = new MarkdownDeep.Markdown();
+			var md = new global::Xilium.MarkdownDeep.Markdown();
 			md.UserBreaks = true;
 
 			// Process blocks
@@ -673,7 +672,7 @@ namespace MarkdownDeep
 		public static List<string> SplitSections(string markdown)
 		{
 			// Build blocks
-			var md = new MarkdownDeep.Markdown();
+			var md = new global::Xilium.MarkdownDeep.Markdown();
 
 			// Process blocks
 			var blocks = md.ProcessBlocks(markdown);
