@@ -86,6 +86,7 @@
     <Content Include="mdd_gripper.png" />
     <Content Include="mdd_help.html" />
     <Content Include="mdd_modal_background.png" />
+    <Content Include="mdd_preview.css" />
     <Content Include="mdd_styles.css" />
     <Content Include="mdd_toolbar.png" />
     <Content Include="readme.txt" />
