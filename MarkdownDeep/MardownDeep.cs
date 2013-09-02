@@ -309,8 +309,13 @@ namespace Xilium.MarkdownDeep
 		}
 
 		// Set rel="nofollow" on all links
-		public bool NoFollowLinks
-		{
+		public bool NoFollowLinks {
+			get;
+			set;
+		}
+
+		// Set rel="nofollow" on external links
+		public bool NoFollowExternalLinks {
 			get;
 			set;
 		}
@@ -445,15 +450,21 @@ namespace Xilium.MarkdownDeep
 
 			string url = tag.attributes["href"];
 
+			// IsUrlFullyQualified analyzer
+			bool? isUrlFullyQualified_cache = null;
+			Func<bool> fncIsUrlFullyQualified = () => {
+				if (!isUrlFullyQualified_cache.HasValue) isUrlFullyQualified_cache = Utils.IsUrlFullyQualified(url);
+				return isUrlFullyQualified_cache.Value;
+			};
+
 			// No follow?
-			if (NoFollowLinks)
-			{
+			if (this.NoFollowLinks || this.NoFollowExternalLinks && fncIsUrlFullyQualified()) {
 				tag.attributes["rel"] = "nofollow";
 			}
 
 			// New window?
-			if ( (NewWindowForExternalLinks && Utils.IsUrlFullyQualified(url)) ||
-				 (NewWindowForLocalLinks && !Utils.IsUrlFullyQualified(url)) )
+			if ( (NewWindowForExternalLinks && fncIsUrlFullyQualified()) ||
+				 (NewWindowForLocalLinks && !fncIsUrlFullyQualified()) )
 			{
 				tag.attributes["target"] = "_blank";
 			}

@@ -52,6 +52,7 @@ var MarkdownDeep = new function () {
         NewWindowForExternalLinks: false,
         NewWindowForLocalLinks: false,
         NoFollowLinks: false,
+        NoFollowExternalLinks: false,
         HtmlClassFootnotes: "footnotes",
         HtmlClassTitledImages: null,
         RenderingTitledImage: false,
@@ -261,15 +262,22 @@ var MarkdownDeep = new function () {
 
     Markdown.prototype.OnPrepareLink = function (tag) {
         var url = tag.attributes["href"];
-
+		
+    	// IsUrlFullyQualified analyzer
+        var isUrlFullyQualified_cache = null;
+        var fncIsUrlFullyQualified = function() {
+        	if (isUrlFullyQualified_cache === null) isUrlFullyQualified_cache = IsUrlFullyQualified(url);
+			return isUrlFullyQualified_cache;
+        };
+	    
         // No follow?
-        if (this.NoFollowLinks) {
+        if (this.NoFollowLinks || this.NoFollowExternalLinks && fncIsUrlFullyQualified()) {
             tag.attributes["rel"] = "nofollow";
         }
 
         // New window?
-        if ((this.NewWindowForExternalLinks && IsUrlFullyQualified(url)) ||
-			 (this.NewWindowForLocalLinks && !IsUrlFullyQualified(url))) {
+        if ((this.NewWindowForExternalLinks && fncIsUrlFullyQualified()) ||
+			 (this.NewWindowForLocalLinks && !fncIsUrlFullyQualified())) {
             tag.attributes["target"] = "_blank";
         }
 
