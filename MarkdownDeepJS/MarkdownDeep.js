@@ -52,7 +52,6 @@ var MarkdownDeep = new function () {
         NewWindowForExternalLinks: false,
         NewWindowForLocalLinks: false,
         NoFollowLinks: false,
-        NoFollowExternalLinks: false,
         HtmlClassFootnotes: "footnotes",
         HtmlClassTitledImages: null,
         RenderingTitledImage: false,
@@ -271,7 +270,7 @@ var MarkdownDeep = new function () {
         };
 	    
         // No follow?
-        if (this.NoFollowLinks || this.NoFollowExternalLinks && fncIsUrlFullyQualified()) {
+        if (this.NoFollowLinks && fncIsUrlFullyQualified()) {
             tag.attributes["rel"] = "nofollow";
         }
 

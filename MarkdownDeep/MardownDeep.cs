@@ -308,14 +308,8 @@ namespace Xilium.MarkdownDeep
 			set;
 		}
 
-		// Set rel="nofollow" on all links
+		// Set rel="nofollow" on all external links
 		public bool NoFollowLinks {
-			get;
-			set;
-		}
-
-		// Set rel="nofollow" on external links
-		public bool NoFollowExternalLinks {
 			get;
 			set;
 		}
@@ -458,7 +452,7 @@ namespace Xilium.MarkdownDeep
 			};
 
 			// No follow?
-			if (this.NoFollowLinks || this.NoFollowExternalLinks && fncIsUrlFullyQualified()) {
+			if (this.NoFollowLinks && fncIsUrlFullyQualified()) {
 				tag.attributes["rel"] = "nofollow";
 			}
 
