@@ -278,7 +278,7 @@ namespace Xilium.MarkdownDeep
 		// Definitely don't allow "javascript:" or any of it's encodings.
 		public static bool IsSafeUrl(string url)
 		{
-			if (!url.StartsWith("http://") && !url.StartsWith("https://") && !url.StartsWith("ftp://"))
+			if (!url.StartsWith("http://") && !url.StartsWith("https://") && !url.StartsWith("ftp://") && !url.StartsWith("mailto:"))
 				return false;
 
 			return true;
